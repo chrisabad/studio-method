@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 const inter = Inter({
@@ -29,10 +30,6 @@ export default function RootLayout({
         {children}
         <Analytics />
       </body>
-    </html>
-  );
-}
-    </body>
     </html>
   );
 }

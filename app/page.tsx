@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { track } from '@vercel/analytics';
 
 const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_KEY;
 
@@ -275,8 +276,5 @@ export default function Home() {
         <p>Studio Method · 2026 · A Kaleidoscope Studio project</p>
       </footer>
     </div>
-  );
-}
-v>
   );
 }
