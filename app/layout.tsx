@@ -27,7 +27,12 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
       <body className="antialiased">
         {children}
+        <Analytics />
       </body>
+    </html>
+  );
+}
+    </body>
     </html>
   );
 }

@@ -71,6 +71,7 @@ export default function Home() {
 
   const handleCheckout = async () => {
     setLoading(true);
+    track('buy_button_clicked');
     try {
       const response = await fetch('/api/checkout', {
         method: 'POST',
@@ -274,5 +275,8 @@ export default function Home() {
         <p>Studio Method · 2026 · A Kaleidoscope Studio project</p>
       </footer>
     </div>
+  );
+}
+v>
   );
 }

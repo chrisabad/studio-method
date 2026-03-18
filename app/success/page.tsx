@@ -1,6 +1,13 @@
+'use client';
+
+import { useEffect } from 'react';
+import { track } from '@vercel/analytics';
 import Link from 'next/link';
 
 export default function SuccessPage() {
+  useEffect(() => {
+    track('purchase_completed');
+  }, []);
   return (
     <div style={{ backgroundColor: '#1A1A1A', color: '#F5F5F0', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
       <div style={{ textAlign: 'center', padding: '40px 20px', maxWidth: '700px' }}>
