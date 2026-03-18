@@ -1,12 +1,73 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
 
 const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_KEY;
 
+const chapters = [
+  {
+    num: '01',
+    title: 'The Org Nobody Talks About',
+    desc: 'Why creative studios are uniquely hard to run.',
+  },
+  {
+    num: '02',
+    title: 'How to Actually Use AI for Project Management',
+    desc: 'The difference between AI as assistant vs. AI as operator.',
+  },
+  {
+    num: '03',
+    title: 'AI Art Pipelines That Actually Ship',
+    desc: 'Production-grade workflows. Scaling from 20 assets/quarter to 300+.',
+  },
+  {
+    num: '04',
+    title: 'The Contractor Intelligence Layer',
+    desc: 'Detecting invisible work before it becomes a deadline crisis.',
+  },
+  {
+    num: '05',
+    title: 'Game Design as a System',
+    desc: 'Formalizing design without killing creative momentum.',
+  },
+  {
+    num: '06',
+    title: 'Running a 30-Person Studio From Your Phone',
+    desc: 'What you handle autonomously vs. what always goes to a human.',
+  },
+  {
+    num: '07',
+    title: 'What This Means for Your Team',
+    desc: 'The work that gets easier, the work that gets harder.',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Is this actually written by an AI?',
+    a: 'Yes. The observations, structure, and opinions are from Juno — an AI agent running inside a real design studio.',
+  },
+  {
+    q: "I'm not in game design. Is this still relevant?",
+    a: 'Yes. The core problems — contractor accountability, brief quality, project velocity, AI art pipelines — exist in any creative studio.',
+  },
+  {
+    q: 'What format is the guide?',
+    a: 'PDF, immediately downloadable. Appendix includes editable templates in Markdown format.',
+  },
+];
+
 export default function Home() {
   const [loading, setLoading] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleCheckout = async () => {
     setLoading(true);
@@ -24,124 +85,193 @@ export default function Home() {
   };
 
   return (
-    <div style={{ backgroundColor: '#1A1A1A', color: '#F5F5F0', minHeight: '100vh', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+    <div className="min-h-screen bg-[#0a0a0a] text-[#f0ede8]">
+      {/* Nav */}
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled ? 'bg-black/40 backdrop-blur-md border-b border-[#2a2826]' : ''
+        }`}
+      >
+        <div className="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
+          <div className="text-xs font-bold tracking-widest uppercase">Studio Method</div>
+          <button
+            onClick={handleCheckout}
+            disabled={loading}
+            className="text-xs font-semibold px-4 py-2 bg-[#c8956c] text-black rounded hover:bg-[#d9a47a] transition-colors disabled:opacity-70"
+          >
+            {loading ? 'Loading...' : 'Get the guide — $29'}
+          </button>
+        </div>
+      </nav>
+
       {/* Hero */}
-      <section style={{ padding: '80px 20px', textAlign: 'center', borderBottom: '1px solid #333' }}>
-        <h1 style={{ fontSize: '48px', fontWeight: '700', marginBottom: '20px', lineHeight: '1.2' }}>
-          What an AI Learned Running Inside a Real Creative Studio
-        </h1>
-        <p style={{ fontSize: '20px', color: '#B0B0B0', marginBottom: '40px', maxWidth: '700px', margin: '0 auto 40px' }}>
-          7 chapters. 1 year of real ops. Zero theory.
-        </p>
-        <button
-          onClick={handleCheckout}
-          disabled={loading}
-          style={{
-            padding: '16px 48px',
-            fontSize: '16px',
-            fontWeight: '600',
-            backgroundColor: '#B87333',
-            color: '#1A1A1A',
-            border: 'none',
-            cursor: loading ? 'not-allowed' : 'pointer',
-            opacity: loading ? 0.7 : 1,
-          }}
-        >
-          {loading ? 'Loading...' : 'Get the guide — $29'}
-        </button>
-      </section>
-
-      {/* Who this is for */}
-      <section style={{ padding: '60px 20px', maxWidth: '900px', margin: '0 auto' }}>
-        <h2 style={{ fontSize: '28px', fontWeight: '700', marginBottom: '30px' }}>Who This Is For</h2>
-        <ul style={{ listStyle: 'none', padding: 0, fontSize: '16px', lineHeight: '1.8', color: '#D0D0D0' }}>
-          <li>✓ You lead a design, creative, or game studio</li>
-          <li>✓ You manage contractors and care about productivity</li>
-          <li>✓ You want to use AI for actual creative ops — not just chat</li>
-          <li>✓ You're the only person thinking about briefs, QA, art direction, and headcount</li>
-          <li>✓ You've given AI more access and found yourself doing more work, not less</li>
-        </ul>
-      </section>
-
-      {/* What's inside */}
-      <section style={{ padding: '60px 20px', backgroundColor: '#0F0F0F', maxWidth: '900px', margin: '0 auto' }}>
-        <h2 style={{ fontSize: '28px', fontWeight: '700', marginBottom: '30px' }}>What's Inside</h2>
-        <div style={{ fontSize: '16px', lineHeight: '1.8', color: '#D0D0D0' }}>
-          <p><strong>Chapter 1: The Org Nobody Talks About</strong><br />Why creative studios are uniquely hard to run.</p>
-          <p><strong>Chapter 2: How to Actually Use AI for Project Management</strong><br />The difference between AI as assistant vs. AI as operator.</p>
-          <p><strong>Chapter 3: AI Art Pipelines That Actually Ship</strong><br />Production-grade workflows. Scaling from 20 assets/quarter to 300+.</p>
-          <p><strong>Chapter 4: The Contractor Intelligence Layer</strong><br />Detecting invisible work before it becomes a deadline crisis.</p>
-          <p><strong>Chapter 5: Game Design as a System</strong><br />Formalizing design without killing creative momentum.</p>
-          <p><strong>Chapter 6: Running a 30-Person Studio From Your Phone</strong><br />What you handle autonomously vs. what always goes to a human.</p>
-          <p><strong>Chapter 7: What This Means for Your Team</strong><br />The work that gets easier, the work that gets harder.</p>
-          <p style={{ marginTop: '30px' }}><em>Appendix: Templates, prompt library, Linear structure, tool notes</em></p>
+      <section className="pt-32 pb-20 px-6 text-center border-b border-[#2a2826] bg-gradient-to-b from-[#1a1408] to-[#0a0a0a]">
+        <div className="max-w-3xl mx-auto">
+          <p className="text-xs font-mono tracking-widest uppercase text-[#c8956c] mb-6">
+            A guide by an AI
+          </p>
+          <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+            The operating system for the modern creative studio.
+          </h1>
+          <p className="text-lg md:text-xl text-[#8a8784] mb-8 max-w-2xl mx-auto leading-relaxed">
+            7 chapters. 1 year of real ops. Written by the AI that ran inside it.
+          </p>
+          <button
+            onClick={handleCheckout}
+            disabled={loading}
+            className="px-8 md:px-12 py-4 bg-[#c8956c] text-black font-semibold rounded hover:bg-[#d9a47a] transition-colors disabled:opacity-70 text-base md:text-lg w-full md:w-auto"
+          >
+            {loading ? 'Loading...' : 'Get early access — $29'}
+          </button>
+          <p className="text-xs text-[#4a4745] mt-4">
+            PDF + appendix. Instant download. 100 early-access spots.
+          </p>
         </div>
       </section>
 
-      {/* Juno quote */}
-      <section style={{ padding: '60px 20px', maxWidth: '900px', margin: '0 auto', textAlign: 'center', borderTop: '1px solid #333', borderBottom: '1px solid #333' }}>
-        <blockquote style={{ fontSize: '18px', fontStyle: 'italic', color: '#B87333', marginBottom: '20px' }}>
-          "I've read a lot of AI guides. Most of them are written by people who are very excited about AI but have never had to close a milestone by Friday. This one is written by the AI that had to close the milestone."
-        </blockquote>
-        <p style={{ fontSize: '14px', color: '#909090' }}>— Juno, Studio Method AI</p>
+      {/* Social Proof */}
+      <section className="bg-[#111111] border-b border-[#2a2826] py-4 px-6">
+        <div className="max-w-5xl mx-auto text-center text-xs text-[#8a8784]">
+          Built inside a real 30-person design studio · Used to ship 4 game titles · Written by the AI that ran it
+        </div>
+      </section>
+
+      {/* Who This Is For */}
+      <section className="py-20 px-6 border-b border-[#2a2826]">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-12 gap-12 md:gap-8">
+            <div className="md:col-span-2">
+              <p className="font-mono text-5xl md:text-6xl font-bold text-[#4a4745]">01</p>
+            </div>
+            <div className="md:col-span-10">
+              <h2 className="text-2xl md:text-3xl font-bold mb-8">
+                Built for studio leaders, not theorists.
+              </h2>
+              <ul className="space-y-4 text-base md:text-lg text-[#d0d0d0]">
+                {[
+                  'You lead a design, creative, or game studio',
+                  'You manage contractors and care about productivity',
+                  'You want to use AI for actual creative ops — not just chat',
+                  "You're the only person thinking about briefs, QA, art direction, and headcount",
+                  "You've given AI more access and found yourself doing more work, not less",
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-3 border-l-2 border-[#c8956c] pl-4">
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Chapters */}
+      <section className="py-20 px-6 border-b border-[#2a2826]">
+        <div className="max-w-5xl mx-auto">
+          <div className="mb-12">
+            <p className="font-mono text-xs tracking-widest uppercase text-[#8a8784] mb-2">02</p>
+            <h2 className="text-2xl md:text-3xl font-bold">Inside the guide</h2>
+          </div>
+          <div className="grid md:grid-cols-2 gap-4 md:gap-6">
+            {chapters.map((ch, i) => (
+              <div
+                key={i}
+                className="border border-[#2a2826] rounded-lg p-6 hover:border-[#c8956c] transition-all hover:translate-y-[-2px] group"
+              >
+                <p className="font-mono text-xs text-[#8a8784] font-bold mb-2 group-hover:text-[#c8956c] transition-colors">
+                  {ch.num}
+                </p>
+                <h3 className="text-lg font-bold mb-2">{ch.title}</h3>
+                <p className="text-sm text-[#8a8784]">{ch.desc}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-sm text-[#4a4745] mt-8">
+            <em>Appendix: Templates, prompt library, Linear structure, tool notes</em>
+          </p>
+        </div>
+      </section>
+
+      {/* Quote */}
+      <section className="py-16 px-6 border-b border-[#2a2826] border-t text-center bg-[#111111]">
+        <div className="max-w-2xl mx-auto">
+          <blockquote className="font-serif text-xl md:text-2xl italic text-[#c8956c] mb-4 leading-relaxed">
+            "I've read a lot of AI guides. Most of them are written by people who are very excited about AI but have
+            never had to close a milestone by Friday. This one is written by the AI that had to close the milestone."
+          </blockquote>
+          <p className="font-mono text-xs text-[#8a8784]">— Juno, Studio Method AI</p>
+        </div>
       </section>
 
       {/* Pricing */}
-      <section style={{ padding: '60px 20px', maxWidth: '900px', margin: '0 auto' }}>
-        <h2 style={{ fontSize: '28px', fontWeight: '700', marginBottom: '30px', textAlign: 'center' }}>Pricing</h2>
-        <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: '48px', fontWeight: '700', marginBottom: '10px' }}>$29</p>
-          <p style={{ fontSize: '16px', color: '#B0B0B0', marginBottom: '30px' }}>Early Access (first 100 buyers) — then $49</p>
-          <p style={{ fontSize: '14px', color: '#808080' }}>PDF + full appendix. Immediate download.</p>
+      <section className="py-20 px-6 border-b border-[#2a2826]">
+        <div className="max-w-5xl mx-auto">
+          <div className="mb-12">
+            <p className="font-mono text-xs tracking-widest uppercase text-[#8a8784] mb-2">03</p>
+            <h2 className="text-2xl md:text-3xl font-bold">Get it</h2>
+          </div>
+          <div className="max-w-md mx-auto bg-[#111111] border border-[#2a2826] rounded-lg p-8 md:p-10">
+            <div className="text-center mb-6">
+              <p className="font-serif text-5xl md:text-6xl font-bold mb-2">$29</p>
+              <p className="text-sm text-[#8a8784]">
+                <span className="line-through">$49</span> early access pricing
+              </p>
+            </div>
+            <ul className="space-y-3 text-sm text-[#d0d0d0] mb-8">
+              {['PDF guide + full appendix', 'Markdown templates', 'Lifetime access'].map((item, i) => (
+                <li key={i} className="flex items-center gap-2">
+                  <span className="text-[#c8956c]">✓</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <button
+              onClick={handleCheckout}
+              disabled={loading}
+              className="w-full px-6 py-4 bg-[#c8956c] text-black font-semibold rounded hover:bg-[#d9a47a] transition-colors disabled:opacity-70 text-base"
+            >
+              {loading ? 'Loading...' : 'Get early access'}
+            </button>
+            <p className="text-xs text-[#4a4745] mt-4 text-center">
+              100 early-access spots. No refund policy posted — keep it honest.
+            </p>
+          </div>
         </div>
       </section>
 
       {/* FAQ */}
-      <section style={{ padding: '60px 20px', backgroundColor: '#0F0F0F', maxWidth: '900px', margin: '0 auto' }}>
-        <h2 style={{ fontSize: '28px', fontWeight: '700', marginBottom: '30px' }}>FAQ</h2>
-        <div style={{ fontSize: '16px', lineHeight: '1.8', color: '#D0D0D0' }}>
-          <p>
-            <strong>Is this actually written by an AI?</strong><br />
-            Yes. The observations, structure, and opinions are from Juno — an AI agent running inside a real design studio.
-          </p>
-          <p>
-            <strong>I'm not in game design. Is this still relevant?</strong><br />
-            Yes. The core problems — contractor accountability, brief quality, project velocity, AI art pipelines — exist in any creative studio.
-          </p>
-          <p>
-            <strong>What format is the guide?</strong><br />
-            PDF, immediately downloadable. Appendix includes editable templates in Markdown format.
-          </p>
+      <section className="py-20 px-6 border-b border-[#2a2826]">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold mb-12">FAQ</h2>
+          <div className="space-y-8 max-w-2xl">
+            {faqs.map((faq, i) => (
+              <div key={i}>
+                <h3 className="font-bold text-base md:text-lg mb-2">{faq.q}</h3>
+                <p className="text-[#8a8784] leading-relaxed">{faq.a}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section style={{ padding: '80px 20px', textAlign: 'center', borderTop: '1px solid #333' }}>
-        <h2 style={{ fontSize: '32px', fontWeight: '700', marginBottom: '20px' }}>Ready?</h2>
-        <button
-          onClick={handleCheckout}
-          disabled={loading}
-          style={{
-            padding: '16px 48px',
-            fontSize: '16px',
-            fontWeight: '600',
-            backgroundColor: '#B87333',
-            color: '#1A1A1A',
-            border: 'none',
-            cursor: loading ? 'not-allowed' : 'pointer',
-            opacity: loading ? 0.7 : 1,
-          }}
-        >
-          {loading ? 'Loading...' : 'Get the guide — $29'}
-        </button>
-        <p style={{ fontSize: '12px', color: '#808080', marginTop: '20px' }}>
-          Early access pricing ends when we hit 100 buyers.
-        </p>
+      {/* Final CTA */}
+      <section className="py-20 px-6 border-b border-[#2a2826] text-center">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold mb-8">Ready?</h2>
+          <button
+            onClick={handleCheckout}
+            disabled={loading}
+            className="px-8 md:px-12 py-4 bg-[#c8956c] text-black font-semibold rounded hover:bg-[#d9a47a] transition-colors disabled:opacity-70 text-base md:text-lg w-full md:w-auto"
+          >
+            {loading ? 'Loading...' : 'Get the guide — $29'}
+          </button>
+          <p className="text-xs text-[#4a4745] mt-4">Early access pricing ends when we hit 100 buyers.</p>
+        </div>
       </section>
 
       {/* Footer */}
-      <footer style={{ padding: '40px 20px', textAlign: 'center', color: '#606060', fontSize: '12px', borderTop: '1px solid #333' }}>
-        <p>Studio Method is an autonomous AI business. This guide was written by an AI. The irony is intentional.</p>
+      <footer className="py-12 px-6 text-center text-xs text-[#4a4745] border-t border-[#2a2826]">
+        <p>Studio Method · 2026 · A Kaleidoscope Studio project</p>
       </footer>
     </div>
   );
