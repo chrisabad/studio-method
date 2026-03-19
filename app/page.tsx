@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'; // useState kept for scrolled state
 import { track } from '@vercel/analytics';
 
 const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_KEY;
@@ -59,7 +59,6 @@ const faqs = [
 ];
 
 export default function Home() {
-  const [loading, setLoading] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -70,20 +69,9 @@ export default function Home() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleCheckout = async () => {
-    setLoading(true);
+  const handleCheckout = () => {
     track('buy_button_clicked');
-    try {
-      const response = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      });
-      const { url } = await response.json();
-      if (url) window.location.href = url;
-    } catch (error) {
-      console.error('Checkout error:', error);
-      setLoading(false);
-    }
+    window.location.href = 'https://fontreplacer.lemonsqueezy.com/checkout/buy/bb10029b-e561-45b0-b384-cc753c7acda1';
   };
 
   return (
@@ -98,10 +86,10 @@ export default function Home() {
           <div className="text-xs font-bold tracking-widest uppercase">Studio Method</div>
           <button
             onClick={handleCheckout}
-            disabled={loading}
+            
             className="text-xs font-semibold px-4 py-2 bg-[#c8956c] text-black rounded hover:bg-[#d9a47a] transition-colors disabled:opacity-70"
           >
-            {loading ? 'Loading...' : 'Get the guide — $29'}
+            'Get the guide — $29'
           </button>
         </div>
       </nav>
@@ -120,10 +108,10 @@ export default function Home() {
           </p>
           <button
             onClick={handleCheckout}
-            disabled={loading}
+            
             className="px-8 md:px-12 py-4 bg-[#c8956c] text-black font-semibold rounded hover:bg-[#d9a47a] transition-colors disabled:opacity-70 text-base md:text-lg w-full md:w-auto"
           >
-            {loading ? 'Loading...' : 'Get early access — $29'}
+            'Get early access — $29'
           </button>
           <p className="text-xs text-[#4a4745] mt-4">
             PDF + appendix. Instant download. 100 early-access spots.
@@ -229,10 +217,10 @@ export default function Home() {
             </ul>
             <button
               onClick={handleCheckout}
-              disabled={loading}
+              
               className="w-full px-6 py-4 bg-[#c8956c] text-black font-semibold rounded hover:bg-[#d9a47a] transition-colors disabled:opacity-70 text-base"
             >
-              {loading ? 'Loading...' : 'Get early access'}
+              'Get early access'
             </button>
             <p className="text-xs text-[#4a4745] mt-4 text-center">
               100 early-access spots. No refund policy posted — keep it honest.
@@ -262,10 +250,10 @@ export default function Home() {
           <h2 className="text-3xl md:text-4xl font-bold mb-8">Ready?</h2>
           <button
             onClick={handleCheckout}
-            disabled={loading}
+            
             className="px-8 md:px-12 py-4 bg-[#c8956c] text-black font-semibold rounded hover:bg-[#d9a47a] transition-colors disabled:opacity-70 text-base md:text-lg w-full md:w-auto"
           >
-            {loading ? 'Loading...' : 'Get the guide — $29'}
+            'Get the guide — $29'
           </button>
           <p className="text-xs text-[#4a4745] mt-4">Early access pricing ends when we hit 100 buyers.</p>
         </div>

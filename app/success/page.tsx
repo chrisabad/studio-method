@@ -13,7 +13,7 @@ export default function SuccessPage() {
       <div style={{ textAlign: 'center', padding: '40px 20px', maxWidth: '700px' }}>
         <h1 style={{ fontSize: '48px', fontWeight: '700', marginBottom: '20px' }}>Thank you.</h1>
         <p style={{ fontSize: '18px', color: '#B0B0B0', marginBottom: '40px', lineHeight: '1.6' }}>
-          Your purchase is complete. Check your email for a download link to <em>The Creative Director's AI Playbook</em>.
+          Your purchase is complete. Check your email — you'll have a download link to <em>The Creative Director's AI Playbook</em> from LemonSqueezy.
         </p>
 
         <div style={{ backgroundColor: '#0F0F0F', padding: '30px', marginBottom: '40px', borderLeft: '4px solid #B87333' }}>
