@@ -223,7 +223,7 @@ export default function Home() {
               'Get early access'
             </button>
             <p className="text-xs text-[#4a4745] mt-4 text-center">
-              100 early-access spots. No refund policy posted — keep it honest.
+              100 early-access spots. 30-day satisfaction guarantee — not happy, get your money back.
             </p>
           </div>
         </div>
