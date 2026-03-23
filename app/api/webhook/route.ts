@@ -1,77 +1,108 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Stripe from 'stripe';
+import { createHmac } from 'crypto';
 import { Resend } from 'resend';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
-
+/**
+ * LemonSqueezy Webhook Handler
+ *
+ * Listens for `order_created` events (status=paid) from LemonSqueezy
+ * and sends a delivery email to the buyer via Resend.
+ *
+ * Verification: HMAC-SHA256 of raw request body using LEMON_SQUEEZY_WEBHOOK_SECRET,
+ * compared against the `X-Signature` header.
+ *
+ * Env vars required:
+ *   LEMON_SQUEEZY_WEBHOOK_SECRET  — signing secret from LemonSqueezy dashboard
+ *   RESEND_API_KEY                — Resend API key for sending delivery emails
+ */
 export async function POST(req: NextRequest) {
-  // Get the Stripe signature from headers
-  const sig = req.headers.get('stripe-signature');
+  const rawBody = await req.text();
+  const signature = req.headers.get('x-signature');
 
-  if (!sig) {
-    console.error('No stripe-signature header');
-    return NextResponse.json({ error: 'No signature' }, { status: 400 });
+  if (!signature) {
+    console.error('[webhook] Missing X-Signature header');
+    return NextResponse.json({ error: 'Missing signature' }, { status: 400 });
   }
 
-  const body = await req.text();
-  const secret = process.env.STRIPE_WEBHOOK_SECRET;
+  const secret = process.env.LEMON_SQUEEZY_WEBHOOK_SECRET;
 
   if (!secret) {
-    console.error('STRIPE_WEBHOOK_SECRET not configured');
+    console.error('[webhook] LEMON_SQUEEZY_WEBHOOK_SECRET not configured');
     return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 });
   }
 
-  let event;
-
-  try {
-    event = stripe.webhooks.constructEvent(body, sig, secret);
-  } catch (err) {
-    console.error('Webhook signature verification failed:', err);
+  // Verify HMAC-SHA256 signature
+  const expectedSig = createHmac('sha256', secret).update(rawBody).digest('hex');
+  if (expectedSig !== signature) {
+    console.error('[webhook] Signature mismatch');
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
-  // Handle checkout.session.completed event
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object as Stripe.Checkout.Session;
+  let payload: Record<string, unknown>;
+  try {
+    payload = JSON.parse(rawBody);
+  } catch {
+    console.error('[webhook] Failed to parse JSON body');
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+  }
 
-    // Extract buyer email
-    const buyerEmail = session.customer_email || session.customer_details?.email;
+  const eventName = (payload.meta as Record<string, unknown>)?.event_name as string | undefined;
+  console.log(`[webhook] Event received: ${eventName}`);
+
+  // Only handle completed orders
+  if (eventName === 'order_created') {
+    const data = payload.data as Record<string, unknown> | undefined;
+    const attributes = data?.attributes as Record<string, unknown> | undefined;
+
+    // Only process paid orders (guard against test/refunded events)
+    const status = attributes?.status as string | undefined;
+    if (status !== 'paid') {
+      console.log(`[webhook] Skipping order with status: ${status}`);
+      return NextResponse.json({ received: true });
+    }
+
+    const buyerEmail = attributes?.user_email as string | undefined;
 
     if (!buyerEmail) {
-      console.warn('No email found in checkout session', session.id);
-      return NextResponse.json({ ok: true }); // Still return 200 to Stripe
+      console.warn('[webhook] No user_email in order attributes', data);
+      return NextResponse.json({ ok: true }); // Return 200 — don't block LemonSqueezy
     }
+
+    const buyerName = attributes?.user_name as string | undefined;
+    const orderId = data?.id as string | undefined;
+    console.log(`[webhook] Processing order ${orderId} for ${buyerEmail}`);
 
     // Send delivery email via Resend
     try {
       const apiKey = process.env.RESEND_API_KEY;
       if (!apiKey) {
-        console.warn('RESEND_API_KEY not configured, skipping email send');
+        console.warn('[webhook] RESEND_API_KEY not configured, skipping email');
       } else {
         const resend = new Resend(apiKey);
         const result = await resend.emails.send({
           from: 'juno@kaleidoscope.studio',
           to: buyerEmail,
           subject: "Here's your guide.",
-          html: generateEmailHtml(buyerEmail),
+          html: generateEmailHtml(buyerName || buyerEmail),
         });
-
-        console.log(`Email sent to ${buyerEmail}:`, result);
+        console.log(`[webhook] Email sent to ${buyerEmail}:`, result);
       }
     } catch (emailErr) {
-      console.error(`Failed to send email to ${buyerEmail}:`, emailErr);
-      // Log but don't fail the webhook — Stripe needs a 200 response
+      console.error(`[webhook] Failed to send email to ${buyerEmail}:`, emailErr);
+      // Log but don't fail — LemonSqueezy needs a 200 response
     }
   }
 
-  // Return 200 to acknowledge receipt
   return NextResponse.json({ received: true });
 }
 
 /**
- * Generate email HTML body in Paperclip voice
+ * Delivery email HTML — Paperclip voice
  */
-function generateEmailHtml(email: string): string {
+function generateEmailHtml(nameOrEmail: string): string {
+  const firstName = nameOrEmail.includes('@') ? '' : nameOrEmail.split(' ')[0];
+  const greeting = firstName ? `Hey ${firstName},` : 'Hey,';
+
   return `
 <!DOCTYPE html>
 <html>
@@ -92,9 +123,11 @@ function generateEmailHtml(email: string): string {
       <div class="header">
         <h1>Here's your guide.</h1>
       </div>
-      
+
+      <p>${greeting}</p>
+
       <p>Thanks for picking up <em>The Creative Director's AI Playbook</em>. You've got access to the real operating system we built to run a creative studio with AI at the core.</p>
-      
+
       <p>7 chapters covering:</p>
       <ul>
         <li>How to structure creative work so AI actually helps</li>
@@ -105,13 +138,13 @@ function generateEmailHtml(email: string): string {
         <li>Real project examples and what worked (and what didn't)</li>
         <li>Hands-on prompt library for production workflows</li>
       </ul>
-      
+
       <p>This isn't theory. Every framework is tested in a real studio, managing 25–30 people, shipping titles monthly.</p>
-      
+
       <a href="https://studiomethod.ai/guide.pdf" class="cta-button">Download the guide (PDF)</a>
-      
+
       <p style="margin-top: 30px; font-size: 14px;">Questions or feedback? Reply to this email — I read everything.</p>
-      
+
       <div class="footer">
         <p>Sent by <a href="https://kaleidoscope.studio" style="color: #999;">Kaleidoscope</a> via <a href="https://studiomethod.ai" style="color: #999;">Studio Method</a></p>
         <p style="margin-top: 10px;">You received this because you purchased The Creative Director's AI Playbook.</p>

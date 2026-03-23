@@ -1,26 +1,39 @@
-# Stripe Webhook + Resend Email Integration Setup
+# LemonSqueezy Webhook + Resend Email Integration Setup
 
 ## Status
-✅ **Code complete** — webhook handler and email template built  
-⏳ **Secrets needed** — Stripe webhook secret + Resend API key  
+✅ **Code complete** — LemonSqueezy webhook handler and email template built  
+⏳ **Secrets needed** — LemonSqueezy webhook signing secret + Resend API key  
 ⏳ **Not deployed** — waiting for env vars to be added to Vercel
+
+---
+
+## Why LemonSqueezy (not Stripe)
+
+The buy button on studiomethod.ai routes to LemonSqueezy:
+```
+https://fontreplacer.lemonsqueezy.com/checkout/buy/bb10029b-e561-45b0-b384-cc753c7acda1
+```
+
+LemonSqueezy handles the checkout and processes payment. Stripe is not in the flow.
+The webhook handler was rewritten to use LemonSqueezy's `order_created` event.
 
 ---
 
 ## What Was Built
 
-### 1. **Webhook Handler** (`/app/api/webhook/route.ts`)
-- Listens for Stripe `checkout.session.completed` events
-- Verifies Stripe signature using webhook secret
-- Extracts buyer email from session
+### 1. **LemonSqueezy Webhook Handler** (`/app/api/webhook/route.ts`)
+- Listens on `POST /api/webhook` for LemonSqueezy events
+- Verifies HMAC-SHA256 signature using `X-Signature` header and `LEMON_SQUEEZY_WEBHOOK_SECRET`
+- Filters for `order_created` events with `status=paid`
+- Extracts buyer email (and name when available) from order attributes
 - Calls Resend API to send delivery email
-- Returns 200 to Stripe for acknowledgment
+- Returns 200 to LemonSqueezy for acknowledgment
 - Gracefully handles missing API keys (logs warning, continues)
 
 ### 2. **Email Template** (in handler)
 - **From:** `juno@kaleidoscope.studio`
 - **Subject:** "Here's your guide."
-- **Body:** Paperclip voice — friendly, direct, focused on value
+- **Body:** Paperclip voice — friendly, direct, personalized with first name when available
   - 7-chapter summary
   - Download link to `https://studiomethod.ai/guide.pdf`
   - Reply-to context
@@ -28,12 +41,10 @@
 
 ### 3. **Retroactive Email Script** (`/scripts/send-retroactive-emails.ts`)
 - One-off tool to send delivery emails to early buyers
-- Targets: `mob.maxburlak@gmail.com` and `PatrickSAllison@gmail.com`
 - Run after webhook is live and API key is configured
 
 ### 4. **Updated `.env` template**
-- Placeholders for `RESEND_API_KEY` and `STRIPE_WEBHOOK_SECRET`
-- Clear instructions on where to get each secret
+- Placeholders for `RESEND_API_KEY` and `LEMON_SQUEEZY_WEBHOOK_SECRET`
 
 ---
 
@@ -42,7 +53,7 @@
 | Secret | Where to Get | Add To |
 |--------|-------------|---------|
 | `RESEND_API_KEY` | Resend dashboard → API Keys | `.env.local` + Vercel project env vars |
-| `STRIPE_WEBHOOK_SECRET` | Stripe dashboard → Settings → Webhooks → [webhook endpoint] → Signing secret | `.env.local` + Vercel project env vars |
+| `LEMON_SQUEEZY_WEBHOOK_SECRET` | LemonSqueezy dashboard → Settings → Webhooks → [webhook endpoint] → Signing secret | `.env.local` + Vercel project env vars |
 
 ---
 
@@ -51,61 +62,84 @@
 ### Step 1: Get Resend API Key
 1. Go to [resend.com/api-keys](https://resend.com/api-keys)
 2. Copy the **API key** (format: `re_1234...`)
-3. Add to `.env.local` in repo root:
+3. Add to `.env.local`:
    ```
    RESEND_API_KEY=re_...
    ```
 
-### Step 2: Create Stripe Webhook Endpoint
-1. Go to [Stripe Dashboard](https://dashboard.stripe.com) → **Settings** → **Webhooks**
-2. Click **Add endpoint**
+### Step 2: Create LemonSqueezy Webhook Endpoint
+1. Go to [LemonSqueezy dashboard](https://app.lemonsqueezy.com) → **Settings** → **Webhooks**
+2. Click **Add webhook**
 3. Set URL to: `https://studiomethod.ai/api/webhook`
-4. Select events: **checkout.session.completed**
-5. Click **Add endpoint**
-6. Click the new endpoint to reveal the **Signing secret** (format: `whsec_...`)
+4. Select events: **order_created**
+5. Click **Save**
+6. Reveal the **Signing secret** for this webhook endpoint
 7. Add to `.env.local`:
    ```
-   STRIPE_WEBHOOK_SECRET=whsec_...
+   LEMON_SQUEEZY_WEBHOOK_SECRET=<signing_secret>
    ```
 
 ### Step 3: Deploy to Vercel
-1. Commit webhook code:
-   ```bash
-   git add app/api/webhook/route.ts scripts/send-retroactive-emails.ts .env
-   git commit -m "feat: add Stripe webhook + Resend email integration"
-   git push
-   ```
+1. Commit and push the updated webhook code
 2. Vercel auto-deploys on push
 3. After deploy: Go to Vercel project dashboard → **Settings** → **Environment Variables**
 4. Add both secrets:
    - `RESEND_API_KEY` = `re_...`
-   - `STRIPE_WEBHOOK_SECRET` = `whsec_...`
-5. Redeploy to apply env vars (or push an empty commit)
+   - `LEMON_SQUEEZY_WEBHOOK_SECRET` = `<signing_secret>`
+5. Redeploy to apply env vars
 
 ### Step 4: Test Webhook
-1. Make a test purchase on **studiomethod.ai** (use Stripe test mode first if possible, or a real test card)
-2. Check your email for delivery email within 60 seconds
-3. Verify link works: click "Download the guide (PDF)" → should download from `https://studiomethod.ai/guide.pdf`
-4. Check Vercel logs for any errors:
-   ```bash
-   vercel logs studiomethod-site --tail
-   ```
+1. Make a test purchase via `https://fontreplacer.lemonsqueezy.com/checkout/buy/bb10029b-e561-45b0-b384-cc753c7acda1`
+2. Check email for delivery within 60 seconds
+3. Verify link works: "Download the guide (PDF)" → should download from `https://studiomethod.ai/guide.pdf`
+4. Check Vercel logs for errors
 
 ### Step 5: Send Retroactive Emails
 After webhook is live and verified:
 ```bash
-# Add Resend API key to .env.local if not already there
 npx ts-node scripts/send-retroactive-emails.ts
+```
+
+---
+
+## Webhook Verification Logic
+
+LemonSqueezy signs each request with HMAC-SHA256:
+
+```
+X-Signature: <hex digest of HMAC-SHA256(raw_body, LEMON_SQUEEZY_WEBHOOK_SECRET)>
+```
+
+The handler computes the same digest and compares. Mismatches return 400.
+
+## Webhook Event Payload Shape
+
+```json
+{
+  "meta": {
+    "event_name": "order_created",
+    ...
+  },
+  "data": {
+    "id": "order_id",
+    "attributes": {
+      "status": "paid",
+      "user_email": "buyer@example.com",
+      "user_name": "Buyer Name",
+      ...
+    }
+  }
+}
 ```
 
 ---
 
 ## Testing Checklist
 
-- [ ] Stripe webhook endpoint created and signing secret saved
+- [ ] LemonSqueezy webhook endpoint created and signing secret saved
 - [ ] Resend API key obtained and env vars set
 - [ ] Code deployed to Vercel
-- [ ] Test purchase made → delivery email received within 60s
+- [ ] Test purchase → delivery email received within 60s
 - [ ] Download link in email works
 - [ ] Retroactive emails sent to early buyers
 - [ ] Vercel logs show no errors
@@ -115,27 +149,21 @@ npx ts-node scripts/send-retroactive-emails.ts
 ## Troubleshooting
 
 ### Webhook returns 400 "Invalid signature"
-- Check that `STRIPE_WEBHOOK_SECRET` is correct (should start with `whsec_`)
-- Verify it matches the signing secret in Stripe dashboard
-- If not matching, regenerate webhook endpoint in Stripe
+- Check that `LEMON_SQUEEZY_WEBHOOK_SECRET` matches the signing secret in LemonSqueezy dashboard
+- Make sure you're comparing raw body bytes (not parsed JSON) when computing the HMAC — the handler already does this correctly
 
 ### Email not sending
-- Check that `RESEND_API_KEY` is set and correct (should start with `re_`)
-- Check Resend dashboard → recent emails → verify delivery status
+- Check that `RESEND_API_KEY` is set and correct
 - Verify `juno@kaleidoscope.studio` is a verified sender in Resend
-  - If not, add to verified domains or senders in Resend dashboard
+- Check Resend dashboard → recent emails → delivery status
 
 ### PDF download link broken
-- Ensure `guide.pdf` exists at `https://studiomethod.ai/guide.pdf`
-- Check public folder structure in repo
-- Verify Vercel deployment includes the PDF file
+- Ensure `guide.pdf` exists in the `public/` folder or at `https://studiomethod.ai/guide.pdf`
 
 ---
 
 ## Notes
 
-- Webhook silently logs email send failures to Stripe logs (doesn't fail the webhook response)
-- Email template is responsive and works on mobile
-- Both Stripe and Resend support retry logic — if email fails, Resend retries for 48 hours
-- Webhook secret is critical; treat like an API key
-- Test purchases can be made with Stripe test cards (e.g., `4242 4242 4242 4242`)
+- Only `order_created` events with `status=paid` trigger emails — refunds and test orders are ignored
+- Webhook silently logs email send failures (doesn't fail the webhook response, so LemonSqueezy won't retry)
+- Email includes buyer's first name when `user_name` is present in the order
