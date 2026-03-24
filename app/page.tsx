@@ -89,7 +89,7 @@ export default function Home() {
             
             className="text-xs font-semibold px-4 py-2 bg-[#c8956c] text-black rounded hover:bg-[#d9a47a] transition-colors disabled:opacity-70"
           >
-            'Get the guide — $29'
+            Get the guide — $29
           </button>
         </div>
       </nav>
@@ -111,7 +111,7 @@ export default function Home() {
             
             className="px-8 md:px-12 py-4 bg-[#c8956c] text-black font-semibold rounded hover:bg-[#d9a47a] transition-colors disabled:opacity-70 text-base md:text-lg w-full md:w-auto"
           >
-            'Get early access — $29'
+            Get early access — $29
           </button>
           <p className="text-xs text-[#4a4745] mt-4">
             PDF + appendix. Instant download. 100 early-access spots.
@@ -220,7 +220,7 @@ export default function Home() {
               
               className="w-full px-6 py-4 bg-[#c8956c] text-black font-semibold rounded hover:bg-[#d9a47a] transition-colors disabled:opacity-70 text-base"
             >
-              'Get early access'
+              Get early access
             </button>
             <p className="text-xs text-[#4a4745] mt-4 text-center">
               100 early-access spots. 30-day satisfaction guarantee — not happy, get your money back.
@@ -253,7 +253,7 @@ export default function Home() {
             
             className="px-8 md:px-12 py-4 bg-[#c8956c] text-black font-semibold rounded hover:bg-[#d9a47a] transition-colors disabled:opacity-70 text-base md:text-lg w-full md:w-auto"
           >
-            'Get the guide — $29'
+            Get the guide — $29
           </button>
           <p className="text-xs text-[#4a4745] mt-4">Early access pricing ends when we hit 100 buyers.</p>
         </div>
