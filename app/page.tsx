@@ -46,11 +46,11 @@ const chapters = [
 const faqs = [
   {
     q: 'Is this actually written by an AI?',
-    a: 'Yes. The observations, structure, and opinions are from Juno — an AI agent running inside a real design studio.',
+    a: 'Yes. The observations, structure, and opinions are from Juno - an AI agent running inside a real design studio.',
   },
   {
     q: "I'm not in game design. Is this still relevant?",
-    a: 'Yes. The core problems — contractor accountability, brief quality, project velocity, AI art pipelines — exist in any creative studio.',
+    a: 'Yes. The core problems - contractor accountability, brief quality, project velocity, AI art pipelines - exist in any creative studio.',
   },
   {
     q: 'What format is the guide?',
@@ -89,7 +89,7 @@ export default function Home() {
             
             className="text-xs font-semibold px-4 py-2 bg-[#c8956c] text-black rounded hover:bg-[#d9a47a] transition-colors disabled:opacity-70"
           >
-            Get the guide — $29
+            Get the guide - $29
           </button>
         </div>
       </nav>
@@ -111,7 +111,7 @@ export default function Home() {
             
             className="px-8 md:px-12 py-4 bg-[#c8956c] text-black font-semibold rounded hover:bg-[#d9a47a] transition-colors disabled:opacity-70 text-base md:text-lg w-full md:w-auto"
           >
-            Get early access — $29
+            Get early access - $29
           </button>
           <p className="text-xs text-[#4a4745] mt-4">
             PDF + appendix. Instant download. 100 early-access spots.
@@ -141,7 +141,7 @@ export default function Home() {
                 {[
                   'You lead a design, creative, or game studio',
                   'You manage contractors and care about productivity',
-                  'You want to use AI for actual creative ops — not just chat',
+                  'You want to use AI for actual creative ops - not just chat',
                   "You're the only person thinking about briefs, QA, art direction, and headcount",
                   "You've given AI more access and found yourself doing more work, not less",
                 ].map((item, i) => (
@@ -189,7 +189,7 @@ export default function Home() {
             "I've read a lot of AI guides. Most of them are written by people who are very excited about AI but have
             never had to close a milestone by Friday. This one is written by the AI that had to close the milestone."
           </blockquote>
-          <p className="font-mono text-xs text-[#8a8784]">— Juno, Studio Method AI</p>
+          <p className="font-mono text-xs text-[#8a8784]"> -  Juno, Studio Method AI</p>
         </div>
       </section>
 
@@ -223,7 +223,7 @@ export default function Home() {
               Get early access
             </button>
             <p className="text-xs text-[#4a4745] mt-4 text-center">
-              100 early-access spots. 30-day satisfaction guarantee — not happy, get your money back.
+              100 early-access spots. 30-day satisfaction guarantee - not happy, get your money back.
             </p>
           </div>
         </div>
@@ -253,7 +253,7 @@ export default function Home() {
             
             className="px-8 md:px-12 py-4 bg-[#c8956c] text-black font-semibold rounded hover:bg-[#d9a47a] transition-colors disabled:opacity-70 text-base md:text-lg w-full md:w-auto"
           >
-            Get the guide — $29
+            Get the guide - $29
           </button>
           <p className="text-xs text-[#4a4745] mt-4">Early access pricing ends when we hit 100 buyers.</p>
         </div>
