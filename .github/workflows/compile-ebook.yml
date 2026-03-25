@@ -6,6 +6,7 @@ on:
     paths:
       - 'ebook/playbook.html'
       - '.github/workflows/compile-ebook.yml'
+  workflow_dispatch:
 
 jobs:
   compile-pdf:
@@ -163,3 +164,4 @@ jobs:
           git add ebook/playbook.pdf public/guide.pdf
           git diff --staged --quiet || git commit -m "chore: auto-compile ebook PDF [skip ci]"
           git push
+
