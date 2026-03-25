@@ -29,13 +29,12 @@ jobs:
 
       - name: Generate PDF
         run: |
-          vivliostyle build ebook/playbook.html -o ebook/playbook.pdf --size "7in,9in"
-          cp ebook/playbook.pdf public/guide.pdf
+          vivliostyle build ebook/playbook.html -o public/guide.pdf --size "7in,9in"
 
       - name: Commit PDF
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add ebook/playbook.pdf public/guide.pdf
+          git add public/guide.pdf
           git diff --staged --quiet || git commit -m "chore: auto-compile ebook PDF [skip ci]"
           git push
