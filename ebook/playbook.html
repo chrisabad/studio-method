@@ -561,7 +561,22 @@
   }
 
   @media print {
-    .page { page-break-after: always; }
+    html, body { margin: 0; padding: 0; }
+
+    .page {
+      page-break-after: always;
+      page-break-inside: avoid;
+      height: 9in !important;
+      min-height: unset !important;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Prevent orphaned headings and broken pull quotes */
+    h2, h3 { page-break-after: avoid; }
+    .pull-quote, .template-block, .stat-row, table { page-break-inside: avoid; }
+    .col-list { page-break-inside: avoid; }
+
     a { color: inherit; text-decoration: none; }
   }
 </style>
