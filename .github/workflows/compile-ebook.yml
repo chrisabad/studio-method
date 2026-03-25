@@ -12,6 +12,9 @@ jobs:
   compile-pdf:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -44,7 +47,8 @@ jobs:
               path: 'ebook/playbook.pdf',
               format: 'Letter',
               printBackground: true,
-              margin: { top: '0.5in', bottom: '0.5in', left: '0', right: '0.5in' }
+              preferCSSPageSize: true,
+              margin: { top: '0', bottom: '0', left: '0', right: '0' }
             });
 
             await browser.close();
@@ -56,107 +60,6 @@ jobs:
           })();
           EOF
 
-      - name: Upload PDF to Lemon Squeezy
-        env:
-          LEMONSQUEEZY_API_KEY: ${{ secrets.LEMONSQUEEZY_API_KEY }}
-        run: |
-          node - << 'EOF'
-          const fs = require('fs');
-          const https = require('https');
-
-          const VARIANT_ID = '1423952';
-          const API_KEY = process.env.LEMONSQUEEZY_API_KEY;
-          const PDF_PATH = 'ebook/playbook.pdf';
-
-          async function lsRequest(method, path, body, contentType) {
-            return new Promise((resolve, reject) => {
-              const options = {
-                hostname: 'api.lemonsqueezy.com',
-                path,
-                method,
-                headers: {
-                  'Authorization': `Bearer ${API_KEY}`,
-                  'Accept': 'application/vnd.api+json',
-                  ...(contentType ? { 'Content-Type': contentType } : {}),
-                  ...(body ? { 'Content-Length': Buffer.byteLength(body) } : {})
-                }
-              };
-              const req = https.request(options, res => {
-                let data = '';
-                res.on('data', chunk => data += chunk);
-                res.on('end', () => resolve({ status: res.statusCode, body: data }));
-              });
-              req.on('error', reject);
-              if (body) req.write(body);
-              req.end();
-            });
-          }
-
-          (async () => {
-            // Step 1: Delete existing file attachments on the variant
-            const filesRes = await lsRequest('GET', `/v1/files?filter[variant_id]=${VARIANT_ID}`);
-            const filesData = JSON.parse(filesRes.body);
-            const existingFiles = filesData.data || [];
-            console.log(`Found ${existingFiles.length} existing file(s) on variant ${VARIANT_ID}`);
-
-            for (const file of existingFiles) {
-              const delRes = await lsRequest('DELETE', `/v1/files/${file.id}`);
-              console.log(`Deleted file ${file.id}: HTTP ${delRes.status}`);
-            }
-
-            // Step 2: Upload new PDF via multipart form
-            const pdfBuffer = fs.readFileSync(PDF_PATH);
-            const boundary = `----FormBoundary${Date.now()}`;
-            const filename = 'studio-method-playbook.pdf';
-
-            const preamble = Buffer.from(
-              `--${boundary}\r\n` +
-              `Content-Disposition: form-data; name="file"; filename="${filename}"\r\n` +
-              `Content-Type: application/pdf\r\n\r\n`
-            );
-            const epilogue = Buffer.from(`\r\n--${boundary}--\r\n`);
-            const variantField = Buffer.from(
-              `--${boundary}\r\n` +
-              `Content-Disposition: form-data; name="variant_id"\r\n\r\n` +
-              `${VARIANT_ID}\r\n`
-            );
-
-            // Build multipart body: variant_id field + file field
-            const body = Buffer.concat([variantField, preamble, pdfBuffer, epilogue]);
-
-            const uploadRes = await new Promise((resolve, reject) => {
-              const options = {
-                hostname: 'api.lemonsqueezy.com',
-                path: '/v1/files',
-                method: 'POST',
-                headers: {
-                  'Authorization': `Bearer ${API_KEY}`,
-                  'Accept': 'application/vnd.api+json',
-                  'Content-Type': `multipart/form-data; boundary=${boundary}`,
-                  'Content-Length': body.length
-                }
-              };
-              const req = https.request(options, res => {
-                let data = '';
-                res.on('data', chunk => data += chunk);
-                res.on('end', () => resolve({ status: res.statusCode, body: data }));
-              });
-              req.on('error', reject);
-              req.write(body);
-              req.end();
-            });
-
-            console.log(`Upload status: HTTP ${uploadRes.status}`);
-            const uploadData = JSON.parse(uploadRes.body);
-            if (uploadRes.status === 201) {
-              console.log(`✅ PDF uploaded to Lemon Squeezy: ${uploadData.data?.id}`);
-            } else {
-              console.error('Upload failed:', uploadRes.body);
-              process.exit(1);
-            }
-          })();
-          EOF
-
       - name: Commit PDF
         run: |
           git config user.name "github-actions[bot]"
@@ -164,4 +67,3 @@ jobs:
           git add ebook/playbook.pdf public/guide.pdf
           git diff --staged --quiet || git commit -m "chore: auto-compile ebook PDF [skip ci]"
           git push
-
