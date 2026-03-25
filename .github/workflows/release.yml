@@ -24,12 +24,12 @@ jobs:
       - name: Install Vivliostyle
         run: npm install -g @vivliostyle/cli
 
-      - name: Generate PDF
-        run: vivliostyle build ebook/playbook.html -o public/guide.pdf --size "7in,9in"
-
       - name: Get tag name
         id: tag
         run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Generate PDF
+        run: vivliostyle build ebook/playbook.html -o "public/playbook-${{ steps.tag.outputs.tag }}.pdf" --size "7in,9in"
 
       - name: Create GitHub Release with PDF
         uses: softprops/action-gh-release@v2
@@ -45,6 +45,6 @@ jobs:
 
             > To create a new release: `git tag v1.x && git push origin v1.x`
           files: |
-            public/guide.pdf
+            public/playbook-${{ steps.tag.outputs.tag }}.pdf
           draft: false
           prerelease: false
