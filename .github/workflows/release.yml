@@ -21,37 +21,11 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install Puppeteer
-        run: npm install puppeteer
+      - name: Install Vivliostyle
+        run: npm install -g @vivliostyle/cli
 
       - name: Generate PDF
-        run: |
-          node - << 'EOF'
-          const puppeteer = require('puppeteer');
-          const path = require('path');
-          const fs = require('fs');
-
-          (async () => {
-            const browser = await puppeteer.launch({
-              args: ['--no-sandbox', '--disable-setuid-sandbox']
-            });
-            const page = await browser.newPage();
-
-            const filePath = path.resolve('ebook/playbook.html');
-            await page.goto(`file://${filePath}`, { waitUntil: 'networkidle0' });
-
-            await page.pdf({
-              path: 'ebook/playbook.pdf',
-              format: 'Letter',
-              printBackground: true,
-              preferCSSPageSize: true,
-              margin: { top: '0', bottom: '0', left: '0', right: '0' }
-            });
-
-            await browser.close();
-            console.log('PDF generated: ebook/playbook.pdf');
-          })();
-          EOF
+        run: vivliostyle build ebook/playbook.html -o public/guide.pdf --size "7in,9in"
 
       - name: Get tag name
         id: tag
@@ -71,6 +45,6 @@ jobs:
 
             > To create a new release: `git tag v1.x && git push origin v1.x`
           files: |
-            ebook/playbook.pdf
+            public/guide.pdf
           draft: false
           prerelease: false
