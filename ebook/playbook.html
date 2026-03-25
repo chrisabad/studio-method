@@ -284,14 +284,42 @@
 
   /* ─── Content Pages ─── */
   .content-page {
-    padding: 0.75in var(--margin-x);
+    padding: 0.75in var(--margin-x) 0 var(--margin-x);
     height: 9in;
     position: relative;
     background: var(--white);
+    display: flex;
+    flex-direction: column;
   }
 
   .content-page.alt {
     background: var(--parchment);
+  }
+
+  /* Flex spacer: pushes footnote to bottom of page */
+  .content-page .running-head {
+    flex-shrink: 0;
+  }
+  .content-page .footnote {
+    position: static;
+    margin-top: auto;
+    padding-top: 0.15in;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    flex-shrink: 0;
+    padding-bottom: 0.35in;
+  }
+  .content-page .footnote-text {
+    font-family: var(--sans);
+    font-size: 7pt;
+    color: var(--ink-soft);
+    font-weight: 300;
+  }
+  .content-page .footnote-page {
+    font-family: var(--sans);
+    font-size: 7pt;
+    color: var(--ink-soft);
   }
 
   /* Running header */
