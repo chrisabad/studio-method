@@ -28,6 +28,9 @@ jobs:
         id: tag
         run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
+      - name: Inject version into HTML
+        run: sed -i "s/{{VERSION}}/${{ steps.tag.outputs.tag }}/g" ebook/playbook.html
+
       - name: Generate PDF
         run: vivliostyle build ebook/playbook.html -o "public/playbook-${{ steps.tag.outputs.tag }}.pdf" --size "7in,9in"
 
