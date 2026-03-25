@@ -1,0 +1,76 @@
+name: Create Version Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Puppeteer
+        run: npm install puppeteer
+
+      - name: Generate PDF
+        run: |
+          node - << 'EOF'
+          const puppeteer = require('puppeteer');
+          const path = require('path');
+          const fs = require('fs');
+
+          (async () => {
+            const browser = await puppeteer.launch({
+              args: ['--no-sandbox', '--disable-setuid-sandbox']
+            });
+            const page = await browser.newPage();
+
+            const filePath = path.resolve('ebook/playbook.html');
+            await page.goto(`file://${filePath}`, { waitUntil: 'networkidle0' });
+
+            await page.pdf({
+              path: 'ebook/playbook.pdf',
+              format: 'Letter',
+              printBackground: true,
+              preferCSSPageSize: true,
+              margin: { top: '0', bottom: '0', left: '0', right: '0' }
+            });
+
+            await browser.close();
+            console.log('PDF generated: ebook/playbook.pdf');
+          })();
+          EOF
+
+      - name: Get tag name
+        id: tag
+        run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release with PDF
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: Studio Method Playbook ${{ steps.tag.outputs.tag }}
+          body: |
+            ## Studio Method: The Creative Director's AI Playbook
+
+            **Version:** ${{ steps.tag.outputs.tag }}
+
+            Download the PDF below — it includes all 7 chapters, appendices, and the prompt library.
+
+            > To create a new release: `git tag v1.x && git push origin v1.x`
+          files: |
+            ebook/playbook.pdf
+          draft: false
+          prerelease: false
