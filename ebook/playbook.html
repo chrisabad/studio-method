@@ -559,8 +559,6 @@
   .body-flow { display: block; }
 
   .body-section {
-    padding: 0.75in var(--margin-x) 0.7in var(--margin-x);
-    background: var(--white);
     position: relative;
   }
   .body-section.alt { background: var(--parchment); }
@@ -568,18 +566,38 @@
   /* ─── Print ─── */
   @page {
     size: 7in 9in;
-    margin: 0;
+    margin: 0.75in 0.85in 0.7in 0.85in;
+    @bottom-center {
+      content: counter(page);
+      font-family: var(--sans);
+      font-size: 8pt;
+      color: var(--ink-soft);
+    }
+  }
+
+  /* No margins on covers and chapter splash pages */
+  @page :first { margin: 0; }
+  @page cover { margin: 0; @bottom-center { content: none; } }
+  @page chapter-splash { margin: 0; @bottom-center { content: none; } }
+
+  .page {
+    page: cover;
+    page-break-after: always;
+    page-break-inside: avoid;
+  }
+  .page.chapter-splash {
+    page: chapter-splash;
+    page-break-before: right;
   }
 
   @media print {
-    /* Fixed full-page covers */
-    .page { page-break-after: always; page-break-inside: avoid; }
-    /* Flowing content: let Vivliostyle break naturally */
-    .body-section { break-before: page; page-break-before: always; }
-    h2, h3 { break-after: avoid; page-break-after: avoid; }
+    .body-section { page-break-before: auto; }
+    h2 { page-break-after: avoid; margin-top: 0.5in; }
+    h3 { page-break-after: avoid; margin-top: 0.3in; }
     .pull-quote, .template-block, .stat-row, table, .col-list {
-      break-inside: avoid; page-break-inside: avoid;
+      page-break-inside: avoid;
     }
+    p { orphans: 3; widows: 3; }
     a { color: inherit; text-decoration: none; }
   }
 </style>
@@ -638,10 +656,7 @@
 <!-- ════════════════════════════ CHAPTER 1 CONTENT ════════════════════════════ -->
 <div class="body-flow">
 <section class="body-section">
-  <div class="running-head">
-    <span class="running-head-title">The Creative Director's AI Playbook</span>
-    <span class="running-head-chapter">Chapter 1 · The Org Nobody Talks About</span>
-  </div>
+  
 
   <h2>The Flat Org Myth</h2>
   <p>Most organizations have a management layer. Managers filter information, make decisions, escalate. It costs overhead but creates signal flow. A creative studio at a high-velocity gaming company has none of that.</p>
@@ -654,21 +669,11 @@
   <h3>What the job actually looks like</h3>
   <p>The director is in Figma tokens at 11 PM. In Slack at 6 AM with contractors in three time zones. In Linear triaging issues that haven't moved in three days. Reading timesheets looking for the pattern where someone logs 20 hours and the Figma frame shows one asset.</p>
   <p>In meetings about game mechanics, art direction, contractor performance, rebrand timeline, AI pipelines, token systems, and whether we're hitting Friday milestones. This is the job — not a symptom of dysfunction. The actual work.</p>
-
-
-
-  <div class="footnote">
-    <span class="footnote-text">Kaleidoscope Studio · Creative Operations Series</span>
-    <span class="footnote-page">01</span>
-  </div>
 </section>
 
 <!-- ════════════════════════════ CHAPTER 1 CONTENT — PAGE 2 ════════════════════════════ -->
 <section class="body-section alt">
-  <div class="running-head">
-    <span class="running-head-title">The Creative Director's AI Playbook</span>
-    <span class="running-head-chapter">Chapter 1 · The Org Nobody Talks About</span>
-  </div>
+  
 
   <h2>Where Working Memory Dies</h2>
   <p>The problem is that one person absorbing all the coordination is a bottleneck. Not because the director isn't capable — because working memory is finite, and 25 people fill it completely before 9 AM.</p>
@@ -699,11 +704,6 @@
   </div>
 
   <p>What the first 30 days revealed: the bottleneck wasn't talent. It was coordination overhead that everyone had quietly accepted as the cost of doing business. That's where this starts.</p>
-
-  <div class="footnote">
-    <span class="footnote-text">Kaleidoscope Studio · Creative Operations Series</span>
-    <span class="footnote-page">01</span>
-  </div>
 </section>
 
 <!-- ════════════════════════════ CHAPTER 2 COVER ════════════════════════════ -->
@@ -719,10 +719,7 @@
 
 <!-- ════════════════════════════ CHAPTER 2 CONTENT ════════════════════════════ -->
 <section class="body-section">
-  <div class="running-head">
-    <span class="running-head-title">The Creative Director's AI Playbook</span>
-    <span class="running-head-chapter">Chapter 2 · AI for Project Management</span>
-  </div>
+  
 
   <h2>Operator, Not Assistant</h2>
   <p>An AI assistant takes your input ("write a brief") and produces output ("here's your brief"). You stay in control. It's a tool that talks back.</p>
@@ -745,19 +742,11 @@
 
   <h3>The line between helpful and weird</h3>
   <p>The line between helpful and weird is sharp. Cross it, and you've got an agent that does things you didn't explicitly ask it to do. That can go wrong fast. But stay on the right side, and you've got something that genuinely changes the coordination layer.</p>
-
-  <div class="footnote">
-    <span class="footnote-text">Kaleidoscope Studio · Creative Operations Series</span>
-    <span class="footnote-page">03</span>
-  </div>
 </section>
 
 <!-- ════════════════════════════ CHAPTER 2 CONTENT — PAGE 1B ════════════════════════════ -->
 <section class="body-section alt">
-  <div class="running-head">
-    <span class="running-head-title">The Creative Director's AI Playbook</span>
-    <span class="running-head-chapter">Chapter 2 · AI for Project Management</span>
-  </div>
+  
 
   <h2>Linear as the Source of Truth</h2>
   <p>This requires specific naming conventions and issue structure. The details matter — they're what makes it possible for an AI to read Linear and actually understand what's happening.</p>
@@ -798,19 +787,11 @@
   </table>
 
   <p>No custom fields beyond these. They're the ones an agent can actually read. Structured comments mean the difference between "update: started the asset" and something a machine can parse without guessing.</p>
-
-  <div class="footnote">
-    <span class="footnote-text">Kaleidoscope Studio · Creative Operations Series</span>
-    <span class="footnote-page">02</span>
-  </div>
 </section>
 
 <!-- ════════════════════════════ CHAPTER 2 CONTENT — PAGE 2 ════════════════════════════ -->
 <section class="body-section alt">
-  <div class="running-head">
-    <span class="running-head-title">The Creative Director's AI Playbook</span>
-    <span class="running-head-chapter">Chapter 2 · AI for Project Management</span>
-  </div>
+  
 
   <h2>Contractor Accountability<br>Without Surveillance</h2>
   <p>Here's the tension: you need visibility into who's producing, but you don't want to be the kind of boss who reads timesheets like a cop. The middle ground is structural.</p>
@@ -823,19 +804,11 @@
   <p>Sometimes there's a good reason: the work was blocked waiting for feedback. Sometimes it's a signal that this person isn't a fit. The AI does the comparison. You do the conversation.</p>
 
   <div class="rule"></div>
-
-  <div class="footnote">
-    <span class="footnote-text">Kaleidoscope Studio · Creative Operations Series</span>
-    <span class="footnote-page">05</span>
-  </div>
 </section>
 
 <!-- ════════════════════════════ CHAPTER 2 CONTENT — PAGE 2B ════════════════════════════ -->
 <section class="body-section">
-  <div class="running-head">
-    <span class="running-head-title">The Creative Director's AI Playbook</span>
-    <span class="running-head-chapter">Chapter 2 · AI for Project Management</span>
-  </div>
+  
 
   <h2>The Brief → Kickoff → Check-in Loop</h2>
   <p>An art production brief needs to be specific enough that a contractor can execute without constant back-and-forth, but not so prescriptive that you're making decisions the contractor should make.</p>
@@ -868,19 +841,11 @@
     <li><strong>Check-in cadence:</strong> Every 3–4 days if the project is over 40 hours; weekly if shorter. Contractor posts what they shipped, what's blocking them, what they're working on next.</li>
     <li><strong>AI role:</strong> Surface when a check-in is overdue. Post templated check-in prompts. Flag when feedback was promised and didn't arrive. Stay out of the actual creative judgment — that's the designer's call.</li>
   </ul>
-
-  <div class="footnote">
-    <span class="footnote-text">Kaleidoscope Studio · Creative Operations Series</span>
-    <span class="footnote-page">03</span>
-  </div>
 </section>
 
 <!-- ════════════════════════════ CHAPTER 2 — WHAT I HANDLE ════════════════════════════ -->
 <section class="body-section">
-  <div class="running-head">
-    <span class="running-head-title">The Creative Director's AI Playbook</span>
-    <span class="running-head-chapter">Chapter 2 · AI for Project Management</span>
-  </div>
+  
 
   <h2>What I Handle Autonomously vs.<br>What Goes to Chris First</h2>
   <p>Knowing the lane is non-negotiable. An AI operator that overreaches — making creative decisions, overriding contractor work, approving assets — is worse than no AI at all.</p>
@@ -926,29 +891,16 @@
   <div class="pull-quote">
     <p>"If it's a data problem, I flag it. If it's a judgment call — do we extend this contractor, do we change the scope, is this quality good enough — Chris decides."</p>
   </div>
-
-  <div class="footnote">
-    <span class="footnote-text">Kaleidoscope Studio · Creative Operations Series</span>
-    <span class="footnote-page">07</span>
-  </div>
 </section>
 
 <!-- ════════════════════════════ CHAPTER 2 — WEEKLY STATUS ════════════════════════════ -->
 <section class="body-section alt">
-  <div class="running-head">
-    <span class="running-head-title">The Creative Director's AI Playbook</span>
-    <span class="running-head-chapter">Chapter 2 · AI for Project Management</span>
-  </div>
+  
 
   <h2>The Weekly Status<br>That Now Takes 20 Minutes</h2>
   <p>Chris used to spend 90 minutes every Monday morning compiling the weekly status: pulling Linear, checking what closed, what slipped, what's at risk. Writing it up in Notion. Sending it to the leadership team.</p>
   <p>Now: Sunday night, the raw data is generated — open issues, closed issues, slipped milestones, contractor status, budget burn — and posted as a Linear comment on a specific status-tracking issue. Monday morning, Chris reviews that comment, adds the narrative (the <em>why</em> behind what slipped), adds any strategic context, and sends to leadership.</p>
   <p>20 minutes instead of 90. Same information. Less friction.</p>
-
-  <div class="footnote">
-    <span class="footnote-text">Kaleidoscope Studio · Creative Operations Series</span>
-    <span class="footnote-page">04</span>
-  </div>
 </section>
 
 <!-- ════════════════════════════ CHAPTER 3 COVER ════════════════════════════ -->
@@ -964,10 +916,7 @@
 
 <!-- ════════════════════════════ CHAPTER 3 CONTENT ════════════════════════════ -->
 <section class="body-section alt">
-  <div class="running-head">
-    <span class="running-head-title">The Creative Director's AI Playbook</span>
-    <span class="running-head-chapter">Chapter 3 · AI Art Pipelines That Actually Ship</span>
-  </div>
+  
 
   <h2>The Demo-to-Production Gap</h2>
   <p>There's a demo that's stunning, then the next day someone asks "can we actually ship 300 of these a quarter?" and the answer is no, because the pipeline is broken. The gap between a great single output and a reliable production cadence is where most AI art experiments die.</p>
@@ -978,19 +927,11 @@
   </div>
 
   <div class="rule"></div>
-
-  <div class="footnote">
-    <span class="footnote-text">Kaleidoscope Studio · Creative Operations Series</span>
-    <span class="footnote-page">09</span>
-  </div>
 </section>
 
 <!-- ════════════════════════════ CHAPTER 3 CONTENT — PAGE 2 ════════════════════════════ -->
 <section class="body-section">
-  <div class="running-head">
-    <span class="running-head-title">The Creative Director's AI Playbook</span>
-    <span class="running-head-chapter">Chapter 3 · AI Art Pipelines That Actually Ship</span>
-  </div>
+  
 
   <h2>The Prompt Structure That<br>Produces Consistent Results</h2>
   <p>Prompt engineering for production is different from prompt engineering for exploration. You're not trying to find something surprising — you're trying to get the same class of output, reliably, from different people using different models at different times.</p>
@@ -1010,11 +951,6 @@
 
   <h3>Hex codes instead of color names</h3>
   <p>Color names ("deep blue", "warm amber") are interpreted differently by different models. Hex codes from your design token system produce predictable, reviewable results — and they're already defined in your Figma library. Pull them from there. If a token doesn't exist for this color, that's a signal to create one, not to describe it in prose.</p>
-
-  <div class="footnote">
-    <span class="footnote-text">Kaleidoscope Studio · Creative Operations Series</span>
-    <span class="footnote-page">05</span>
-  </div>
 </section>
 
 
@@ -1031,10 +967,7 @@
 
 <!-- ════════════════════════════ CHAPTER 4 CONTENT ════════════════════════════ -->
 <section class="body-section">
-  <div class="running-head">
-    <span class="running-head-title">The Creative Director's AI Playbook</span>
-    <span class="running-head-chapter">Chapter 4 · The Contractor Intelligence Layer</span>
-  </div>
+  
 
   <h2>Making the Invisible Visible</h2>
   <p>A contractor logs 40 hours. You assume 40 hours of production. Then Friday comes. One asset shipped. That's 40 hours for one asset. What was the other 30 hours? Rework? Waiting on feedback? Blocked on a dependency? Or something else?</p>
@@ -1071,19 +1004,11 @@
       Miss two check-ins: follow up. Miss three: escalate. The AI surfaces when the rhythm breaks.
     </div>
   </div>
-
-  <div class="footnote">
-    <span class="footnote-text">Kaleidoscope Studio · Creative Operations Series</span>
-    <span class="footnote-page">06</span>
-  </div>
 </section>
 
 <!-- ════════════════════════════ CHAPTER 4 CONTENT PAGE 2 ════════════════════════════ -->
 <section class="body-section alt">
-  <div class="running-head">
-    <span class="running-head-title">The Creative Director's AI Playbook</span>
-    <span class="running-head-chapter">Chapter 4 · The Contractor Intelligence Layer</span>
-  </div>
+  
 
   <h2>Accountability Without Surveillance</h2>
   <p>The word "accountability" makes people defensive. What you're actually building is visibility. You want to know where the work stands without having to ask.</p>
@@ -1141,11 +1066,6 @@
   </table>
 
   <p>The AI is a force multiplier for visibility. It's not a replacement for judgment.</p>
-
-  <div class="footnote">
-    <span class="footnote-text">Kaleidoscope Studio · Creative Operations Series</span>
-    <span class="footnote-page">07</span>
-  </div>
 </section>
 
 <!-- ════════════════════════════ CHAPTER 5 COVER ════════════════════════════ -->
@@ -1161,10 +1081,7 @@
 
 <!-- ════════════════════════════ CHAPTER 5 CONTENT ════════════════════════════ -->
 <section class="body-section">
-  <div class="running-head">
-    <span class="running-head-title">The Creative Director's AI Playbook</span>
-    <span class="running-head-chapter">Chapter 5 · Game Design as a System</span>
-  </div>
+  
 
   <h2>The Brief That Doesn't<br>Generate Questions</h2>
   <p>Game design at a small studio is often done by feel. Someone has a good idea, they pitch it, people like it, they start building. When it ships, it's either good or it's not.</p>
@@ -1195,19 +1112,11 @@
   <div class="pull-quote">
     <p>"No seventeen-page design doc. No open questions section. Specific enough to execute — not so prescriptive that you're making decisions the contractor should make."</p>
   </div>
-
-  <div class="footnote">
-    <span class="footnote-text">Kaleidoscope Studio · Creative Operations Series</span>
-    <span class="footnote-page">08</span>
-  </div>
 </section>
 
 <!-- ════════════════════════════ CHAPTER 5 CONTENT PAGE 2 ════════════════════════════ -->
 <section class="body-section alt">
-  <div class="running-head">
-    <span class="running-head-title">The Creative Director's AI Playbook</span>
-    <span class="running-head-chapter">Chapter 5 · Game Design as a System</span>
-  </div>
+  
 
   <h2>Pre-Production as a Gate,<br>Not a Formality</h2>
   <p>Pre-production in most game studios is either perfunctory (we do it because we have to) or absent (we start building and figure it out). Neither produces good outcomes at speed.</p>
@@ -1266,11 +1175,6 @@
       <td>Lead designer — Figma comment required</td>
     </tr>
   </table>
-
-  <div class="footnote">
-    <span class="footnote-text">Kaleidoscope Studio · Creative Operations Series</span>
-    <span class="footnote-page">09</span>
-  </div>
 </section>
 
 <!-- ════════════════════════════ CHAPTER 6 COVER ════════════════════════════ -->
@@ -1286,10 +1190,7 @@
 
 <!-- ════════════════════════════ CHAPTER 6 CONTENT ════════════════════════════ -->
 <section class="body-section">
-  <div class="running-head">
-    <span class="running-head-title">The Creative Director's AI Playbook</span>
-    <span class="running-head-chapter">Chapter 6 · Running a 30-Person Studio From Your Phone</span>
-  </div>
+  
 
   <h2>What Gets Delegated to the System</h2>
   <p>The goal isn't to be less involved. It's to be involved at the right level. There's a list of things a creative director should own personally — creative decisions, people decisions, milestone decisions — and a list of things that chew through their working memory without requiring their judgment.</p>
@@ -1325,19 +1226,11 @@
   </ul>
 
   <p>That's the whole thing. No noise. No "for your awareness." If it's not one of those six categories, it doesn't appear in the brief.</p>
-
-  <div class="footnote">
-    <span class="footnote-text">Kaleidoscope Studio · Creative Operations Series</span>
-    <span class="footnote-page">10</span>
-  </div>
 </section>
 
 <!-- ════════════════════════════ CHAPTER 6 CONTENT PAGE 2 ════════════════════════════ -->
 <section class="body-section alt">
-  <div class="running-head">
-    <span class="running-head-title">The Creative Director's AI Playbook</span>
-    <span class="running-head-chapter">Chapter 6 · Running a 30-Person Studio From Your Phone</span>
-  </div>
+  
 
   <h2>The Escalation Model<br>That Doesn't Cry Wolf</h2>
   <p>An AI operator that surfaces everything is worse than one that surfaces nothing. The goal is signal-to-noise ratio — and that requires tiering your alerts before they reach you.</p>
@@ -1385,11 +1278,6 @@
   <div class="pull-quote">
     <p>"The system doesn't replace presence. It replaces the part of presence that was never about judgment — the logging, the surfacing, the reminding."</p>
   </div>
-
-  <div class="footnote">
-    <span class="footnote-text">Kaleidoscope Studio · Creative Operations Series</span>
-    <span class="footnote-page">11</span>
-  </div>
 </section>
 
 <!-- ════════════════════════════ CHAPTER 7 COVER ════════════════════════════ -->
@@ -1405,10 +1293,7 @@
 
 <!-- ════════════════════════════ CHAPTER 7 CONTENT ════════════════════════════ -->
 <section class="body-section">
-  <div class="running-head">
-    <span class="running-head-title">The Creative Director's AI Playbook</span>
-    <span class="running-head-chapter">Chapter 7 · What This Means for Your Team</span>
-  </div>
+  
 
   <h2>What Gets Easier.<br>What Gets Harder.</h2>
   <p>Every conversation about AI and creative work eventually arrives at the same anxiety: is my job still safe? The honest answer is that the job changes more than it disappears — but the change is substantive. Some of what you did before is automated. Some of what you were too busy to do becomes possible.</p>
@@ -1439,19 +1324,11 @@
       New contractors onboard faster because the system is explicit. Less tribal knowledge. Briefs, templates, prompts — all documented and reusable.
     </div>
   </div>
-
-  <div class="footnote">
-    <span class="footnote-text">Kaleidoscope Studio · Creative Operations Series</span>
-    <span class="footnote-page">12</span>
-  </div>
 </section>
 
 <!-- ════════════════════════════ CHAPTER 7 CONTENT PAGE 2 ════════════════════════════ -->
 <section class="body-section alt">
-  <div class="running-head">
-    <span class="running-head-title">The Creative Director's AI Playbook</span>
-    <span class="running-head-chapter">Chapter 7 · What This Means for Your Team</span>
-  </div>
+  
 
   <h2>The New FTE/Contractor<br>Calculus</h2>
   <p>Classic model: hire 5 FTEs for core work, hire contractors for overflow. The bottleneck is the FTEs' capacity to oversee contractor output.</p>
@@ -1487,11 +1364,6 @@
   <div class="pull-quote">
     <p>"The work that ships isn't always the most creative work. It's the work that was set up to succeed."</p>
   </div>
-
-  <div class="footnote">
-    <span class="footnote-text">Kaleidoscope Studio · Creative Operations Series</span>
-    <span class="footnote-page">13</span>
-  </div>
 </section>
 
 <!-- ════════════════════════════ APPENDIX COVER ════════════════════════════ -->
@@ -1507,10 +1379,7 @@
 
 <!-- ════════════════════════════ APPENDIX A — TOOLS ════════════════════════════ -->
 <section class="body-section">
-  <div class="running-head">
-    <span class="running-head-title">The Creative Director's AI Playbook</span>
-    <span class="running-head-chapter">Appendix A · Tools Reference</span>
-  </div>
+  
 
   <h2>The Studio Tools Stack</h2>
 
@@ -1576,19 +1445,11 @@
       <td>Morning briefs, email triage, Linear monitoring, contractor alerts</td>
     </tr>
   </table>
-
-  <div class="footnote">
-    <span class="footnote-text">Kaleidoscope Studio · Creative Operations Series</span>
-    <span class="footnote-page">A1</span>
-  </div>
 </section>
 
 <!-- ════════════════════════════ APPENDIX B — TEMPLATES ════════════════════════════ -->
 <section class="body-section alt">
-  <div class="running-head">
-    <span class="running-head-title">The Creative Director's AI Playbook</span>
-    <span class="running-head-chapter">Appendix B · Templates</span>
-  </div>
+  
 
   <h2>Template 1: Art Production Brief</h2>
   <div class="template-block">
@@ -1616,19 +1477,11 @@
     <span class="field">□ Approved via Figma comment from lead designer</span><br>
     <span class="field">□ [Add 1–2 project-specific criteria]</span>
   </div>
-
-  <div class="footnote">
-    <span class="footnote-text">Kaleidoscope Studio · Creative Operations Series</span>
-    <span class="footnote-page">B1</span>
-  </div>
 </section>
 
 <!-- ════════════════════════════ APPENDIX B — TEMPLATES PAGE 2 ════════════════════════════ -->
 <section class="body-section">
-  <div class="running-head">
-    <span class="running-head-title">The Creative Director's AI Playbook</span>
-    <span class="running-head-chapter">Appendix B · Templates</span>
-  </div>
+  
 
   <h2>Template 2: Weekly Contractor Check-In</h2>
   <div class="template-block">
@@ -1658,19 +1511,11 @@
     <span class="field">□ First check-in date scheduled — on both calendars</span><br>
     <span class="field">□ Questions answered — open items resolved before contractor starts</span>
   </div>
-
-  <div class="footnote">
-    <span class="footnote-text">Kaleidoscope Studio · Creative Operations Series</span>
-    <span class="footnote-page">B2</span>
-  </div>
 </section>
 
 <!-- ════════════════════════════ APPENDIX C — PROMPT LIBRARY ════════════════════════════ -->
 <section class="body-section alt">
-  <div class="running-head">
-    <span class="running-head-title">The Creative Director's AI Playbook</span>
-    <span class="running-head-chapter">Appendix C · Prompt Library</span>
-  </div>
+  
 
   <h2>Production Prompt Templates</h2>
   <p>These prompts are designed to be filled in from your design token system and used directly with Midjourney (or equivalent). The structure is more important than any individual word.</p>
@@ -1706,19 +1551,11 @@
     <br><strong>Lock:</strong> <span class="field">[Everything else stays identical]</span>
     <br><strong>Success signal:</strong> <span class="field">[How we'll know this round worked]</span>
   </div>
-
-  <div class="footnote">
-    <span class="footnote-text">Kaleidoscope Studio · Creative Operations Series</span>
-    <span class="footnote-page">C1</span>
-  </div>
 </section>
 
 <!-- ════════════════════════════ CLOSING PAGE ════════════════════════════ -->
 <section class="body-section">
-  <div class="running-head">
-    <span class="running-head-title">The Creative Director's AI Playbook</span>
-    <span class="running-head-chapter">Closing</span>
-  </div>
+  
 
   <h2>The Studio That Runs Itself</h2>
   <p>This is where it started: a director managing 25 people without a management layer. Chaos on the surface, but underneath, a system starting to crystallize.</p>
@@ -1736,11 +1573,6 @@
   <div class="intro-sig">
     <div class="intro-sig-rule"></div>
     <span class="intro-sig-text">v2.0 · March 2026 · Kaleidoscope Studio · studiomethod.ai</span>
-  </div>
-
-  <div class="footnote">
-    <span class="footnote-text">Kaleidoscope Studio · Creative Operations Series</span>
-    <span class="footnote-page">—</span>
   </div>
 </section>
 </div>
