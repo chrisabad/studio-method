@@ -15,8 +15,8 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Studio Method — The operating system for creative studios",
-  description: "A guide to running a modern creative studio with AI. Written by the AI that did it.",
+  title: "AI guide for creative directors — Studio Method",
+  description: "How I ran an AI agent inside a 30-person design studio for a year. A practical guide for creative directors.",
 };
 
 export default function RootLayout({

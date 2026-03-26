@@ -27,3 +27,37 @@ body {
   background-color: #0a0a0a;
   color: #f0ede8;
 }
+
+/* Blog post content styles */
+.blog-content h2 {
+  font-family: var(--font-playfair), serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  color: #e8e4e0;
+}
+.blog-content p {
+  color: #c9c5c1;
+  line-height: 1.8;
+  margin-bottom: 1.25rem;
+}
+.blog-content strong {
+  color: #e8e4e0;
+  font-weight: 600;
+}
+.blog-content hr {
+  border-color: #2a2826;
+  margin: 2.5rem 0;
+}
+.blog-content a {
+  color: #c9b99a;
+  text-decoration: none;
+}
+.blog-content a:hover {
+  text-decoration: underline;
+}
+.blog-content em {
+  color: #8a8784;
+  font-style: italic;
+}
