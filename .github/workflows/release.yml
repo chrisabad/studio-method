@@ -32,7 +32,9 @@ jobs:
         run: sed -i "s/{{VERSION}}/${{ steps.tag.outputs.tag }}/g" ebook/playbook.html
 
       - name: Generate PDF
-        run: vivliostyle build ebook/playbook.html -o "public/playbook-${{ steps.tag.outputs.tag }}.pdf" --size "7in,9in"
+        run: |
+          vivliostyle build ebook/playbook.html -o "public/playbook-${{ steps.tag.outputs.tag }}.pdf" --size "7in,9in"
+          cp "public/playbook-${{ steps.tag.outputs.tag }}.pdf" "public/playbook.pdf"
 
       - name: Configure AWS CLI for R2
         run: |
@@ -62,5 +64,6 @@ jobs:
             > To create a new release: `git tag v1.x && git push origin v1.x`
           files: |
             public/playbook-${{ steps.tag.outputs.tag }}.pdf
+            public/playbook.pdf
           draft: false
           prerelease: false
