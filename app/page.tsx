@@ -204,7 +204,7 @@ export default function Home() {
             <div className="text-center mb-6">
               <p className="font-serif text-5xl md:text-6xl font-bold mb-2">$29</p>
               <p className="text-sm text-[#8a8784]">
-                <span className="line-through">$49</span> early access pricing
+                Early access price — reg. <span className="line-through">$49</span>
               </p>
             </div>
             <ul className="space-y-3 text-sm text-[#d0d0d0] mb-8">
