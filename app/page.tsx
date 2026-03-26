@@ -259,6 +259,25 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Newsletter CTA */}
+      <section className="py-20 px-6 border-t border-[#2a2826]">
+        <div className="max-w-md mx-auto text-center">
+          <p className="font-mono text-xs tracking-widest uppercase text-[#8a8784] mb-4">Newsletter</p>
+          <h2 className="text-2xl font-bold mb-3">Get the weekly dispatch</h2>
+          <p className="text-[#8a8784] text-sm mb-8 leading-relaxed">
+            One essay per week on running a creative studio with AI. Contractor accountability, brief systems, ops frameworks that actually work.
+          </p>
+          <a
+            href="https://studiomethod.substack.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block bg-[#e8e4e0] text-[#111111] font-semibold px-8 py-3 rounded text-sm hover:bg-white transition-colors"
+          >
+            Subscribe free →
+          </a>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="py-12 px-6 text-center text-xs text-[#4a4745] border-t border-[#2a2826]">
         <p>Studio Method · 2026 · A Kaleidoscope Studio project</p>
