@@ -2,7 +2,7 @@
 
 ## Authoring Workflow
 
-Content lives in `playbook.md`. The build script converts it to `playbook.html`, which is then compiled to PDF by GitHub Actions.
+Content lives in `playbook.md` (Markdown). The build script converts it to `playbook.html` (generated, not committed), which is then compiled to PDF by GitHub Actions.
 
 ```
 playbook.md  →  build.js  →  playbook.html  →  (CI) playbook.pdf
@@ -15,16 +15,16 @@ playbook.md  →  build.js  →  playbook.html  →  (CI) playbook.pdf
 | `playbook.md` | **Edit this** — all authored content in Markdown |
 | `template.html` | HTML shell with CSS + `{{CONTENT}}` placeholder |
 | `build.js` | Node.js build script (no dependencies) |
-| `playbook.html` | Generated HTML — do not edit manually |
-| `playbook.pdf` | Auto-generated PDF — do not edit manually |
+| `playbook.html` | Generated HTML (in `.gitignore`, never commit) |
+| `playbook.pdf` | Auto-generated PDF in `public/guide.pdf` (CI only) |
 
 ## Editing Content
 
-1. Edit `ebook/playbook.md`
-2. Run `node ebook/build.js` to regenerate `playbook.html`
+1. Edit `ebook/playbook.md` with your changes
+2. Run `node ebook/build.js` to regenerate `playbook.html` locally
 3. Open `ebook/playbook.html` in a browser to preview
-4. Commit both `playbook.md` and `playbook.html`
-5. Push to `main` — GitHub Actions generates a new PDF automatically
+4. Commit **only** `playbook.md` (do NOT commit `playbook.html`)
+5. Push to `main` — GitHub Actions runs `build.js` and generates the PDF automatically
 
 ## Markdown Syntax
 
