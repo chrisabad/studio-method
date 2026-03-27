@@ -48,6 +48,11 @@ jobs:
             "s3://${{ secrets.R2_BUCKET }}/studio-method/playbook-${{ steps.tag.outputs.tag }}.pdf" \
             --endpoint-url ${{ secrets.R2_ENDPOINT }}
           echo "Uploaded to R2: studio-method/playbook-${{ steps.tag.outputs.tag }}.pdf"
+          aws s3 cp "public/playbook-${{ steps.tag.outputs.tag }}.pdf" \
+            "s3://${{ secrets.R2_BUCKET }}/studio-method/playbook-latest.pdf" \
+            --endpoint-url ${{ secrets.R2_ENDPOINT }} \
+            --content-type application/pdf
+          echo "Updated R2 static URL: studio-method/playbook-latest.pdf"
 
       - name: Create GitHub Release with PDF
         uses: softprops/action-gh-release@v2
