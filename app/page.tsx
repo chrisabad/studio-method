@@ -2,6 +2,13 @@
 
 import { useState, useEffect } from 'react'; // useState kept for scrolled state
 import { track } from '@vercel/analytics';
+// Plausible custom events
+declare global {
+  interface Window {
+    plausible?: (event: string, options?: { props?: Record<string, string | number | boolean> }) => void;
+  }
+}
+
 
 const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_KEY;
 
@@ -71,6 +78,10 @@ export default function Home() {
 
   const handleCheckout = () => {
     track('buy_button_clicked');
+    // Plausible funnel: purchase_intent event
+    if (typeof window !== 'undefined' && window.plausible) {
+      window.plausible('purchase_intent');
+    }
     window.location.href = 'https://fontreplacer.lemonsqueezy.com/checkout/buy/bb10029b-e561-45b0-b384-cc753c7acda1';
   };
 
@@ -285,3 +296,4 @@ export default function Home() {
     </div>
   );
 }
+
