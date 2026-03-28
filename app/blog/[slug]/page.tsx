@@ -4,6 +4,8 @@ import { getPostBySlug, getAllPosts } from '@/lib/blog';
 import { marked } from 'marked';
 import type { Metadata } from 'next';
 
+const BASE_URL = 'https://studiomethod.ai';
+
 interface Props {
   params: Promise<{ slug: string }>;
 }
@@ -21,6 +23,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${post.title} — Studio Method`,
     description: post.description,
     keywords: post.keywords,
+    alternates: {
+      canonical: `${BASE_URL}/blog/${post.slug}`,
+    },
   };
 }
 
@@ -31,8 +36,36 @@ export default async function BlogPost({ params }: Props) {
 
   const html = await marked(post.content);
 
+  const articleSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    description: post.description,
+    datePublished: post.date,
+    dateModified: post.date,
+    author: {
+      '@type': 'Person',
+      name: 'Chris Abad',
+      url: BASE_URL,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Studio Method',
+      url: BASE_URL,
+    },
+    url: `${BASE_URL}/blog/${post.slug}`,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${BASE_URL}/blog/${post.slug}`,
+    },
+  };
+
   return (
     <main className="min-h-screen bg-[#0a0908] text-[#e8e4e0]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
       <div className="max-w-2xl mx-auto px-6 py-20">
         <Link href="/blog" className="text-sm text-[#8a8784] hover:text-[#e8e4e0] transition-colors mb-12 block">
           ← All posts
