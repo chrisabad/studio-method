@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import Script from "next/script";
 import "./globals.css";
 
 const inter = Inter({
@@ -26,8 +27,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
+      <head>
+        {/* Plausible Analytics — privacy-first, no cookies, no banner required */}
+        {/* Activate: register studiomethod.ai at plausible.io (free tier) */}
+        <Script
+          defer
+          data-domain="studiomethod.ai"
+          src="https://plausible.io/js/script.tagged-events.js"
+          strategy="afterInteractive"
+        />
+      </head>
       <body className="antialiased">
         {children}
+        {/* Vercel Analytics — activate at vercel.com/chrisabad/studio-method-site/analytics */}
         <Analytics />
       </body>
     </html>
