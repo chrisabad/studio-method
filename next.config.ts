@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/apply",
-        destination: "/#pricing",
+        destination: "/contact",
         permanent: false,
       },
     ];
