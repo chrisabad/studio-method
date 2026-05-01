@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.studiomethod.gsc-weekly-report</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>/Users/openclaw/.openclaw/workspace/github-studio-method/scripts/gsc-weekly-report.py</string>
+        <string>--cron</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/openclaw/.openclaw/workspace/github-studio-method</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>GSC_KEY_FILE</key>
+        <string></string>
+        <key>GSC_SITE_URL</key>
+        <string>https://studiomethod.ai</string>
+        <key>GSC_OUTPUT_DIR</key>
+        <string>/Users/openclaw/.openclaw/workspace/github-studio-method/reports/gsc</string>
+    </dict>
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Weekday</key>
+        <integer>5</integer>
+        <key>Hour</key>
+        <integer>9</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+    <key>StandardOutPath</key>
+    <string>/Users/openclaw/.openclaw/workspace/github-studio-method/reports/gsc/cron-stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/openclaw/.openclaw/workspace/github-studio-method/reports/gsc/cron-stderr.log</string>
+</dict>
+</plist>

@@ -1,0 +1,4 @@
+# Google Search Console API dependencies
+# Install: pip install -r scripts/requirements-gsc.txt
+google-api-python-client>=2.100.0
+google-auth>=2.20.0

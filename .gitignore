@@ -42,3 +42,8 @@ next-env.d.ts
 
 # ebook build artifacts
 ebook/playbook.html
+
+# GSC secrets — never commit service account keys
+secrets/gsc-key.json
+secrets/*.json
+reports/gsc/
